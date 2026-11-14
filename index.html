@@ -205,24 +205,3 @@ function draw() {
 function check() {
   if (checked) return;
   checked = true;
-clearInterval(timer);
-let ok = 0;
-slots.forEach((item, i) => { if (item && item.id === i) ok++; });
-let bonus = (ok === 8 && sec >= 20) ? 2 : (ok >= 6 && sec >= 10 ? 1 : 0);
-let pts = Math.min(10, ok + bonus);
-if (pts > scores[cur]) scores[cur] = pts;
-done[cur] = true;
-document.getElementById("chkBtn").style.display = "none";
-const nxt = document.getElementById("nxtBtn");
-nxt.style.display = "inline-block";
-nxt.textContent = cur < 2 ? "Следующий уровень →" : "Завершить игру";
-const msg = document.getElementById("msg");
-msg.style.display = "block";
-msg.textContent = Верно: ${ok} из 8. Бонус за скорость: +${bonus}. Очки за уровень: ${pts} из 10.;
-draw();
-}
-function nextLvl() {
-if (cur < 2) startLevel(cur + 1);
-else alert("Игра завершена! Ваш общий результат: " + (scores[0] + scores[1] + scores[2]) + " из 30 очков.");
-}
-startLevel(0);
