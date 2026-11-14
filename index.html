@@ -1,464 +1,119 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Собери объявление: структура вакансии</title>
-  <style>
-    :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --border: #cbd5e1;
-      --success-bg: #dcfce7;
-      --success-border: #16a34a;
-      --success-text: #15803d;
-      --error-bg: #fee2e2;
-      --error-border: #dc2626;
-      --error-text: #b91c1c;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 20px 14px 40px;
-      line-height: 1.45;
-    }
-
-    .container {
-      max-width: 1020px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      background: var(--card);
-      padding: 22px 20px;
-      border-radius: 16px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-      margin-bottom: 18px;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      color: #0f172a;
-    }
-
-    .header p {
-      font-size: 14px;
-      color: #475569;
-      max-width: 780px;
-      margin: 0 auto;
-    }
-
-    .levels-nav {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .level-tab {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: #334155;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .level-tab .badge {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      color: #334155;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .level-tab.active {
-      background: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
-    }
-
-    .level-tab.active .badge {
-      background: #ffffff;
-      color: #0f172a;
-    }
-
-    .level-tab.done {
-      border-color: var(--success-border);
-      background: #f0fdf4;
-      color: var(--success-text);
-    }
-
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .stat-pill {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .stat-pill.timer-warn {
-      background: #fef2f2;
-      border-color: #ef4444;
-      color: #dc2626;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    @media (max-width: 780px) {
-      .board {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .panel {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-      border: 1px solid #e2e8f0;
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .panel-title {
-      font-size: 16px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .panel-counter {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      background: #f8fafc;
-      padding: 3px 10px;
-      border-radius: 999px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .panel-hint {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .pool-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 120px;
-    }
-
-    .block-card {
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1e293b;
-      cursor: grab;
-      user-select: none;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .block-card:hover {
-      border-color: var(--primary);
-      background: #f8fafc;
-    }
-
-    .block-card.selected {
-      border-color: var(--primary);
-      background: #eff6ff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-
-    .drag-dots {
-      color: #94a3b8;
-      font-weight: 900;
-      letter-spacing: -1px;
-      padding-top: 1px;
-    }
-
-    .slots-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .slot {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      min-height: 52px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f8fafc;
-      transition: all 0.15s ease;
-      cursor: pointer;
-    }
-
-    .slot.drag-over {
-      border-color: var(--primary);
-      background: #eff6ff;
-    }
-
-    .slot.filled {
-      border-style: solid;
-      border-color: #94a3b8;
-      background: #ffffff;
-    }
-
-    .slot.correct {
-      border-color: var(--success-border);
-      background: var(--success-bg);
-      color: var(--success-text);
-    }
-
-    .slot.wrong {
-      border-color: var(--error-border);
-      background: var(--error-bg);
-      color: var(--error-text);
-    }
-
-    .slot-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      color: #475569;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .slot.correct .slot-num {
-      background: var(--success-border);
-      color: #fff;
-    }
-
-    .slot.wrong .slot-num {
-      background: var(--error-border);
-      color: #fff;
-    }
-
-    .slot-text {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-      color: #64748b;
-    }
-
-    .slot.filled .slot-text {
-      color: #0f172a;
-      font-weight: 600;
-    }
-
-    .slot-status {
-      font-size: 16px;
-      font-weight: 800;
-      flex-shrink: 0;
-    }
-
-    .actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 22px;
-      border-radius: 12px;
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-
-    .btn-secondary:hover {
-      background: #cbd5e1;
-    }
-
-    .feedback-box {
-      margin-top: 16px;
-      padding: 14px 18px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 15px;
-      display: none;
-    }
-
-    .feedback-box.show {
-      display: block;
-    }
-
-    .feedback-box.info {
-      background: #eff6ff;
-      border: 1px solid #93c5fd;
-      color: #1e40af;
-    }
-
-    .feedback-box.success {
-      background: #f0fdf4;
-      border: 1px solid #86efac;
-      color: #166534;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 100;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 440px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal h2 {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .modal .final-score {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--primary);
-      margin: 12px 0;
-    }
-
-    .modal p {
-      color: #475569;
-      font-size: 15px;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Игра «Собери структуру вакансии»</title>
+    <style>
+        body { font-family: Arial; margin: 0; padding: 20px; }
+        #game-area { display: flex; justify-content: space-between; max-width: 90%; margin: auto; }
+        .draggable-block {
+            width: 150px;
+            height: 70px;
+            background-color: #fafafa;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            cursor: grab;
+            text-align: center;
+            line-height: 70px;
+            user-select: none;
+            color: #333;
+            transition: all 0.2s ease-in-out;
+        }
+        .drop-zone {
+            width: 150px;
+            height: 70px;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            margin-top: 10px;
+            text-align: center;
+            line-height: 70px;
+            color: #aaa;
+        }
+        .drop-zone.dragover { border-style: solid; }
+        button { margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Собери объявление: структура вакансии</h1>
-      <p>
-        Три уровня: сначала соберите структуру объявления, затем расставьте фрагменты двух настоящих объявлений о вакансиях.
-        На каждый уровень даётся 45 секунд: за каждый верный блок — 1 очко, за быстрое прохождение — до 2 очков бонуса;
-        максимум за уровень — 10 очков, за всю игру — 30. Нажмите блок, а затем место в объявлении — или перетащите его мышью.
-        После проверки на правильных блоках появится зелёный флажок, на неправильных — красный крестик.
-      </p>
+<div id="game-area">
+    <!-- Левая колонка с блоками -->
+    <div style="width: 45%">
+        <h2>Блоки структуры объявления о вакансии</h2>
+        <p>Перетащите их в пустые слоты справа.</p>
+        <div class="draggable-block" draggable="true">Название вакансии (должность)</div>
+        <div class="draggable-block" draggable="true">Вводная часть (краткое описание сути работы)</div>
+        <div class="draggable-block" draggable="true">Описание компании</div>
+        <div class="draggable-block" draggable="true">Условия работы</div>
+        <div class="draggable-block" draggable="true">Обязанности</div>
+        <div class="draggable-block" draggable="true">Требования к кандидату</div>
+        <div class="draggable-block" draggable="true">Призыв к действию</div>
     </div>
-
-    <div class="levels-nav" id="levelsNav"></div>
-
-    <div class="stats-bar">
-      <div class="stat-pill" id="timerBox">⏱ Осталось: <span id="timerVal">45</span> сек</div>
-      <div class="stat-pill">🏆 Очки за уровень: <span id="levelScoreVal">0</span> / 10</div>
-      <div class="stat-pill">📊 Общий счёт: <span id="totalScoreVal">0</span> / 30</div>
+    
+    <!-- Правая колонка со слотами -->
+    <div style="width: 45%">
+        <h2>Структура объявления о вакансии</h2>
+        <p>Соберите элементы сверху вниз:</p>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        <div class="drop-zone"></div>
+        
+        <button onclick=\"checkOrder()\">Проверить порядок</button>
     </div>
+</div>
 
-    <div class="board">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Блоки</div>
-          <div class="panel-counter">Осталось: <span id="remainingVal">8</span></div>
-        </div>
-        <div class="panel-hint">Нажмите блок, затем слот — или перетащите мышью</div>
-        <div class="pool-list" id="poolList"></div>
-      </div>
+<script>
+// Логика перетаскивания
+let draggedBlock = null;
+document.addEventListener('dragstart', event => {
+    if (!event.target.classList.contains('draggable-block')) return;
+    draggedBlock = event.target;
+});
 
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title" id="docTitle">Объявление о вакансии</div>
+document.addEventListener('dragenter', event => {
+    const target = event.target.closest('.drop-zone');
+    if (target && !target.firstChild) target.classList.add('dragover');
+});
+
+document.addEventListener('dragleave', event => {
+    const target = event.target.closest('.drop-zone');
+    if (target) target.classList.remove('dragover');
+});
+
+document.addEventListener('drop', event => {
+    event.preventDefault();
+    const target = event.target.closest('.drop-zone');
+    if (target && !target.firstChild && draggedBlock) {
+        target.append(draggedBlock);
+        target.classList.remove('dragover');
+    }
+});
+
+document.addEventListener('dragend', () => {
+    document.querySelectorAll('.drop-zone').forEach(zone => zone.classList.remove('dragover'));
+});
+
+// Проверка порядка блоков
+function checkOrder() {
+    // Верный порядок ID элементов (по порядку добавления)
+    const correctOrder = ['Название вакансии (должность)', 'Вводная часть (краткое описание сути работы)', 
+                         'Описание компании', 'Условия работы', 'Обязанности', 
+                         'Требования к кандидату', 'Призыв к действие'];
+
+    let currentOrder = [];
+    document.querySelectorAll('.drop-zone > .draggable-block').forEach(block => {
+        currentOrder.push(block.textContent.trim());
+    });
+
+    if (JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
+        alert(\"Отлично! Вы собрали объявление правильно.\");
+    } else {
+        alert(\"Попробуйте ещё раз. Обратите внимание на логику построения текста\".\");
+    }
+}
+</script>
+</body>
+</html>
+    
