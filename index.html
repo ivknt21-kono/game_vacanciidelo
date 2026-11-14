@@ -1,464 +1,228 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Собери объявление: структура вакансии</title>
-  <style>
-    :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --border: #cbd5e1;
-      --success-bg: #dcfce7;
-      --success-border: #16a34a;
-      --success-text: #15803d;
-      --error-bg: #fee2e2;
-      --error-border: #dc2626;
-      --error-text: #b91c1c;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 20px 14px 40px;
-      line-height: 1.45;
-    }
-
-    .container {
-      max-width: 1020px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      background: var(--card);
-      padding: 22px 20px;
-      border-radius: 16px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-      margin-bottom: 18px;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      color: #0f172a;
-    }
-
-    .header p {
-      font-size: 14px;
-      color: #475569;
-      max-width: 780px;
-      margin: 0 auto;
-    }
-
-    .levels-nav {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .level-tab {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: #334155;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .level-tab .badge {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      color: #334155;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .level-tab.active {
-      background: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
-    }
-
-    .level-tab.active .badge {
-      background: #ffffff;
-      color: #0f172a;
-    }
-
-    .level-tab.done {
-      border-color: var(--success-border);
-      background: #f0fdf4;
-      color: var(--success-text);
-    }
-
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .stat-pill {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .stat-pill.timer-warn {
-      background: #fef2f2;
-      border-color: #ef4444;
-      color: #dc2626;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    @media (max-width: 780px) {
-      .board {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .panel {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-      border: 1px solid #e2e8f0;
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .panel-title {
-      font-size: 16px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .panel-counter {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      background: #f8fafc;
-      padding: 3px 10px;
-      border-radius: 999px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .panel-hint {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .pool-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 120px;
-    }
-
-    .block-card {
-      background: #ffffff;
-      border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1e293b;
-      cursor: grab;
-      user-select: none;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .block-card:hover {
-      border-color: var(--primary);
-      background: #f8fafc;
-    }
-
-    .block-card.selected {
-      border-color: var(--primary);
-      background: #eff6ff;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-
-    .drag-dots {
-      color: #94a3b8;
-      font-weight: 900;
-      letter-spacing: -1px;
-      padding-top: 1px;
-    }
-
-    .slots-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .slot {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      min-height: 52px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f8fafc;
-      transition: all 0.15s ease;
-      cursor: pointer;
-    }
-
-    .slot.drag-over {
-      border-color: var(--primary);
-      background: #eff6ff;
-    }
-
-    .slot.filled {
-      border-style: solid;
-      border-color: #94a3b8;
-      background: #ffffff;
-    }
-
-    .slot.correct {
-      border-color: var(--success-border);
-      background: var(--success-bg);
-      color: var(--success-text);
-    }
-
-    .slot.wrong {
-      border-color: var(--error-border);
-      background: var(--error-bg);
-      color: var(--error-text);
-    }
-
-    .slot-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      color: #475569;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .slot.correct .slot-num {
-      background: var(--success-border);
-      color: #fff;
-    }
-
-    .slot.wrong .slot-num {
-      background: var(--error-border);
-      color: #fff;
-    }
-
-    .slot-text {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-      color: #64748b;
-    }
-
-    .slot.filled .slot-text {
-      color: #0f172a;
-      font-weight: 600;
-    }
-
-    .slot-status {
-      font-size: 16px;
-      font-weight: 800;
-      flex-shrink: 0;
-    }
-
-    .actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 22px;
-      border-radius: 12px;
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-
-    .btn-secondary:hover {
-      background: #cbd5e1;
-    }
-
-    .feedback-box {
-      margin-top: 16px;
-      padding: 14px 18px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 15px;
-      display: none;
-    }
-
-    .feedback-box.show {
-      display: block;
-    }
-
-    .feedback-box.info {
-      background: #eff6ff;
-      border: 1px solid #93c5fd;
-      color: #1e40af;
-    }
-
-    .feedback-box.success {
-      background: #f0fdf4;
-      border: 1px solid #86efac;
-      color: #166534;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 100;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 28px 24px;
-      max-width: 440px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal h2 {
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .modal .final-score {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--primary);
-      margin: 12px 0;
-    }
-
-    .modal p {
-      color: #475569;
-      font-size: 15px;
-      margin-bottom: 20px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Собери объявление: структура вакансии</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #f1f5f9; color: #0f172a; padding: 16px; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .top { background: #fff; padding: 20px; border-radius: 16px; text-align: center; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .top h1 { font-size: 22px; margin-bottom: 8px; }
+    .top p { font-size: 14px; color: #475569; }
+    .tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab { padding: 9px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: #fff; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .tab.done { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+    .stats { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+    .pill { background: #fff; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 14px; }
+    .pill.warn { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+    .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+    .box { background: #fff; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0; }
+    .box-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-weight: 700; }
+    .hint { font-size: 13px; color: #64748b; margin-bottom: 12px; }
+    .list { display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+    .item { padding: 11px 13px; border: 2px solid #cbd5e1; border-radius: 10px; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .item.sel { border-color: #2563eb; background: #eff6ff; }
+    .slot { padding: 10px 12px; border: 2px dashed #cbd5e1; border-radius: 10px; background: #f8fafc; display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 48px; }
+    .slot.filled { border-style: solid; border-color: #94a3b8; background: #fff; }
+    .slot.ok { border-color: #16a34a; background: #dcfce7; color: #15803d; }
+    .slot.bad { border-color: #dc2626; background: #fee2e2; color: #b91c1c; }
+    .num { width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .slot.ok .num { background: #16a34a; color: #fff; }
+    .slot.bad .num { background: #dc2626; color: #fff; }
+    .txt { flex: 1; font-size: 14px; color: #64748b; }
+    .slot.filled .txt { color: #0f172a; font-weight: 600; }
+    .btns { margin-top: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn { padding: 12px 20px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .btn-blue { background: #2563eb; color: #fff; }
+    .btn-gray { background: #e2e8f0; color: #1e293b; }
+    .msg { margin-top: 14px; padding: 12px; border-radius: 10px; text-align: center; font-weight: 600; background: #eff6ff; color: #1e40af; display: none; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Собери объявление: структура вакансии</h1>
-      <p>
-        Три уровня: сначала соберите структуру объявления, затем расставьте фрагменты двух настоящих объявлений о вакансиях.
-        На каждый уровень даётся 45 секунд: за каждый верный блок — 1 очко, за быстрое прохождение — до 2 очков бонуса;
-        максимум за уровень — 10 очков, за всю игру — 30. Нажмите блок, а затем место в объявлении — или перетащите его мышью.
-        После проверки на правильных блоках появится зелёный флажок, на неправильных — красный крестик.
-      </p>
-    </div>
+<div class="wrap">
+  <div class="top">
+    <h1>Собери объявление: структура вакансии</h1>
+    <p>Три уровня: соберите структуру объявления и расставьте фрагменты реальных вакансий. На уровень даётся 45 секунд. Нажмите на блок слева, а затем на пустую строку справа.</p>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="stats">
+    <div class="pill" id="tBox">⏱ Осталось: <span id="tVal">45</span> сек</div>
+    <div class="pill">🏆 За уровень: <span id="lVal">0</span> / 10</div>
+    <div class="pill">📊 Общий счёт: <span id="totVal">0</span> / 30</div>
+  </div>
+  <div class="grid">
+    <div class="box">
+      <div class="box-head"><span>БЛОКИ</span><span id="remVal">Осталось: 8</span></div>
+      <div class="hint">1. Нажмите на нужный блок ниже</div>
+      <div class="list" id="pool"></div>
+    </div>
+    <div class="box">
+      <div class="box-head"><span id="docHead">ОБЪЯВЛЕНИЕ О ВАКАНСИИ</span><span id="fillVal">0 из 8</span></div>
+      <div class="hint">2. Нажмите на место в объявлении, чтобы поставить блок</div>
+      <div class="list" id="slots"></div>
+    </div>
+  </div>
+  <div class="btns">
+    <button class="btn btn-gray" onclick="startLevel(cur)">Сбросить уровень</button>
+    <button class="btn btn-blue" id="chkBtn" onclick="check()">Проверить ответ</button>
+    <button class="btn btn-blue" id="nxtBtn" style="display:none" onclick="nextLvl()">Следующий уровень →</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div>
 
-    <div class="levels-nav" id="levelsNav"></div>
+<script>
+const DATA = [
+  {
+    name: "1. Структура объявления",
+    title: "ОБЪЯВЛЕНИЕ О ВАКАНСИИ",
+    rows: [
+      "Название должности и уровень позиции",
+      "Кратко о компании и продукте",
+      "Задачи и зона ответственности",
+      "Требования к кандидату (навыки и опыт)",
+      "Будет плюсом (дополнительные навыки)",
+      "Условия работы (график, формат, зарплата)",
+      "Бонусы и соцпакет компании",
+      "Этапы отбора и контакты для отклика"
+    ]
+  },
+  {
+    name: "2. Менеджер по клиентам",
+    title: "ВАКАНСИЯ: МЕНЕДЖЕР ПО РАБОТЕ С КЛИЕНТАМИ",
+    rows: [
+      "Менеджер по работе с клиентами (B2B, удалённо)",
+      "Мы — IT-сервис документооборота, с нами работают более 4 000 компаний.",
+      "Вести базу клиентов, проводить онлайн-презентации и продлевать подписки.",
+      "Опыт в B2B-продажах от 1 года, грамотная речь и знание CRM.",
+      "Будет плюсом опыт работы в SaaS-проектах и базовое знание 1С.",
+      "Оклад 80 000 ₽ + KPI (от 130 000 ₽ на руки), график 5/2 с 9:00 до 18:00.",
+      "ДМС со стоматологией, оплата обучения и корпоративный ноутбук.",
+      "Откликнитесь на вакансию — рекрутер напишет в Telegram в течение дня."
+    ]
+  },
+  {
+    name: "3. Делопроизводитель",
+    title: "ВАКАНСИЯ: ДЕЛОПРОИЗВОДИТЕЛЬ / СПЕЦИАЛИСТ ДОУ",
+    rows: [
+      "Делопроизводитель (специалист по документообороту)",
+      "Производственно-логистический холдинг с филиалами в 12 регионах России.",
+      "Регистрация корреспонденции, контроль исполнения приказов и ведение архива.",
+      "Знание ГОСТ Р 7.0.97-2016, опыт работы в СЭД от 1 года, внимательность.",
+      "Преимуществом станет опыт подготовки номенклатуры дел и договоров.",
+      "Оформление по ТК РФ, стабильный оклад 65 000 ₽ на руки, график 5/2.",
+      "Офис в 5 минутах от метро, бесплатные обеды и годовая премия.",
+      "Присылайте резюме — после короткого звонка пригласим на встречу в офис."
+    ]
+  }
+];
 
-    <div class="stats-bar">
-      <div class="stat-pill" id="timerBox">⏱ Осталось: <span id="timerVal">45</span> сек</div>
-      <div class="stat-pill">🏆 Очки за уровень: <span id="levelScoreVal">0</span> / 10</div>
-      <div class="stat-pill">📊 Общий счёт: <span id="totalScoreVal">0</span> / 30</div>
-    </div>
+let cur = 0, scores =, done = [false, false, false];
+let pool = [], slots = [null,null,null,null,null,null,null,null];
+let sel = null, checked = false, sec = 45, timer = null;
 
-    <div class="board">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Блоки</div>
-          <div class="panel-counter">Осталось: <span id="remainingVal">8</span></div>
-        </div>
-        <div class="panel-hint">Нажмите блок, затем слот — или перетащите мышью</div>
-        <div class="pool-list" id="poolList"></div>
-      </div>
+function startLevel(idx) {
+  cur = idx; checked = false; sel = null;
+  slots = [null,null,null,null,null,null,null,null];
+  pool = DATA[idx].rows.map((t, i) => ({ id: i, text: t })).sort(() => Math.random() - 0.5);
+  document.getElementById("docHead").textContent = DATA[idx].title;
+  document.getElementById("msg").style.display = "none";
+  document.getElementById("chkBtn").style.display = "inline-block";
+  document.getElementById("nxtBtn").style.display = "none";
+  clearInterval(timer);
+  sec = 45;
+  document.getElementById("tVal").textContent = sec;
+  document.getElementById("tBox").className = "pill";
+  timer = setInterval(() => {
+    if (checked) return clearInterval(timer);
+    sec--;
+    document.getElementById("tVal").textContent = Math.max(0, sec);
+    if (sec <= 10) document.getElementById("tBox").className = "pill warn";
+    if (sec <= 0) { clearInterval(timer); check(); }
+  }, 1000);
+  draw();
+}
 
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title" id="docTitle">Объявление о вакансии</div>
+function draw() {
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  DATA.forEach((d, i) => {
+    const b = document.createElement("button");
+    b.className = "tab" + (i === cur ? " active" : "") + (done[i] ? " done" : "");
+    b.textContent = d.name;
+    b.onclick = () => startLevel(i);
+    tabs.appendChild(b);
+  });
+
+  document.getElementById("lVal").textContent = scores[cur];
+  document.getElementById("totVal").textContent = scores[0] + scores[1] + scores[2];
+  document.getElementById("remVal").textContent = "Осталось: " + pool.length;
+  document.getElementById("fillVal").textContent = slots.filter(Boolean).length + " из 8";
+
+  const poolEl = document.getElementById("pool");
+  poolEl.innerHTML = "";
+  pool.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item" + (sel && sel.id === item.id ? " sel" : "");
+    div.textContent = "⋮⋮ " + item.text;
+    div.onclick = () => { if (!checked) { sel = (sel && sel.id === item.id) ? null : item; draw(); } };
+    poolEl.appendChild(div);
+  });
+
+  const slotsEl = document.getElementById("slots");
+  slotsEl.innerHTML = "";
+  slots.forEach((item, i) => {
+    const div = document.createElement("div");
+    let cls = "slot" + (item ? " filled" : "");
+    let mark = "";
+    if (checked) {
+      if (item && item.id === i) { cls += " ok"; mark = "✅"; }
+      else { cls += " bad"; mark = "❌"; }
+    }
+    div.className = cls;
+    div.innerHTML = `<div class="num">${i + 1}</div><div class="txt">${item ? item.text : "Нажмите, чтобы поставить блок"}</div><div>${mark}</div>`;
+    div.onclick = () => {
+      if (checked) return;
+      if (sel) {
+        pool = pool.filter(x => x.id !== sel.id);
+        if (slots[i]) pool.push(slots[i]);
+        slots[i] = sel;
+        sel = null;
+        draw();
+      } else if (item) {
+        pool.push(item);
+        slots[i] = null;
+        draw();
+      }
+    };
+    slotsEl.appendChild(div);
+  });
+}
+
+function check() {
+  if (checked) return;
+  checked = true;
+clearInterval(timer);
+let ok = 0;
+slots.forEach((item, i) => { if (item && item.id === i) ok++; });
+let bonus = (ok === 8 && sec >= 20) ? 2 : (ok >= 6 && sec >= 10 ? 1 : 0);
+let pts = Math.min(10, ok + bonus);
+if (pts > scores[cur]) scores[cur] = pts;
+done[cur] = true;
+document.getElementById("chkBtn").style.display = "none";
+const nxt = document.getElementById("nxtBtn");
+nxt.style.display = "inline-block";
+nxt.textContent = cur < 2 ? "Следующий уровень →" : "Завершить игру";
+const msg = document.getElementById("msg");
+msg.style.display = "block";
+msg.textContent = Верно: ${ok} из 8. Бонус за скорость: +${bonus}. Очки за уровень: ${pts} из 10.;
+draw();
+}
+function nextLvl() {
+if (cur < 2) startLevel(cur + 1);
+else alert("Игра завершена! Ваш общий результат: " + (scores[0] + scores[1] + scores[2]) + " из 30 очков.");
+}
+startLevel(0);
